@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api',
-  withCredentials: true,  // send cookies with every request (needed for refresh token)
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  withCredentials: true,
 });
 
 // ── Request interceptor ───────────────────────────────────────
@@ -27,9 +27,9 @@ API.interceptors.response.use(
 
       try {
         const { data } = await axios.post(
-          'http://localhost:5000/api/auth/refresh-token',
-          {},
-          { withCredentials: true }
+                      `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/refresh-token`,
+                       {},
+                       { withCredentials: true }
         );
         localStorage.setItem('accessToken', data.accessToken);
         original.headers.Authorization = `Bearer ${data.accessToken}`;

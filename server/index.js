@@ -1,37 +1,45 @@
 const dotenv = require('dotenv');
-dotenv.config();
+dotenv.config(); // must be first
 
 const express = require('express');
-const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const connectDB = require('./config/db');
 
-// dotenv.config();
-
 const app = express();
 
-// ─── Middleware ───────────────────────────────────────────────
+// ─── CORS ─────────────────────────────────────────────────────
 app.use(cors({
-  origin: [
-    process.env.CLIENT_URL,
-    'http://localhost:5173'   // keep local dev working too
-  ],
+  origin: function (origin, callback) {
+    const allowed = [
+      'http://localhost:5173',
+      'https://marketnest-chi.vercel.app',
+      'https://marketnest-pravin.vercel.app',
+    ];
+    if (!origin || allowed.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
-app.use(express.json());           // parse JSON request bodies
-app.use(cookieParser());           // parse cookies (for refresh token)
+
+// ─── Middleware ───────────────────────────────────────────────
+app.use(express.json());
+app.use(cookieParser());
+
+// ─── Health check ─────────────────────────────────────────────
+app.get('/', (req, res) => res.json({ message: 'MarketNest API running' }));
 
 // ─── Routes ──────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/dashboard', dashboardRoutes);
-
-// ─── Health check ────────────────────────────────────────────
-app.get('/', (req, res) => res.json({ message: 'MarketNest API running' }));
 
 // ─── Start ───────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
