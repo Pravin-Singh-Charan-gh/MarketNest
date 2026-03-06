@@ -16,8 +16,11 @@ const app = express();
 
 // ─── Middleware ───────────────────────────────────────────────
 app.use(cors({
-  origin: process.env.CLIENT_URL,  // only allow our React app
-  credentials: true                // allow cookies to be sent
+  origin: [
+    process.env.CLIENT_URL,
+    'http://localhost:5173'   // keep local dev working too
+  ],
+  credentials: true
 }));
 app.use(express.json());           // parse JSON request bodies
 app.use(cookieParser());           // parse cookies (for refresh token)
