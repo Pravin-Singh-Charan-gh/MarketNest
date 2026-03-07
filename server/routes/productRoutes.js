@@ -12,16 +12,13 @@ const authMiddleware = require('../middleware/authMiddleware');
 const requireRole = require('../middleware/roleMiddleware');
 const { upload } = require('../config/cloudinary');
 
-// Brand sees their own products — MUST be before /:id route
-router.get('/brand/my-products', authMiddleware, requireRole('brand'), getMyProducts);
+const cpUpload = upload.fields([{ name: 'images', maxCount: 10 }]);
 
-// Public routes
+router.get('/brand/my-products', authMiddleware, requireRole('brand'), getMyProducts);
 router.get('/', getProducts);
 router.get('/:id', getProductById);
-
-// Brand only routes
-router.post('/', authMiddleware, requireRole('brand'), upload.array('images', 5), createProduct);
-router.put('/:id', authMiddleware, requireRole('brand'), upload.array('images', 5), updateProduct);
+router.post('/', authMiddleware, requireRole('brand'), cpUpload, createProduct);
+router.put('/:id', authMiddleware, requireRole('brand'), cpUpload, updateProduct);
 router.delete('/:id', authMiddleware, requireRole('brand'), deleteProduct);
 
 module.exports = router;

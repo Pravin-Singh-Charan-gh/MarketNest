@@ -30,9 +30,10 @@ exports.createProduct = async (req, res) => {
     }
 
     // Upload each file buffer to Cloudinary
-    const imageUrls = req.files && req.files.length > 0
-      ? await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)))
-      : [];
+    const imageFiles = (req.files && req.files['images']) || [];
+    const imageUrls = imageFiles.length > 0
+       ? await Promise.all(imageFiles.map(file => uploadToCloudinary(file.buffer)))
+       : [];
 
     const product = await Product.create({
       title,
@@ -120,9 +121,10 @@ exports.updateProduct = async (req, res) => {
     const { title, description, price, category, status } = req.body;
 
     // Upload new images if any
-    const newImageUrls = req.files && req.files.length > 0
-      ? await Promise.all(req.files.map(file => uploadToCloudinary(file.buffer)))
-      : [];
+    const imageFiles = (req.files && req.files['images']) || [];
+    const imageUrls = imageFiles.length > 0
+     ? await Promise.all(imageFiles.map(file => uploadToCloudinary(file.buffer)))
+     : [];
 
     const images = [...product.images, ...newImageUrls];
 
