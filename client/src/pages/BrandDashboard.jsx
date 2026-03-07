@@ -57,6 +57,8 @@ export default function BrandDashboard() {
     try {
       // Must use FormData because we're sending files
       const formData = new FormData();
+      console.log('Files to upload:', files);
+      console.log('Files length:', files.length);
       formData.append('title', form.title);
       formData.append('description', form.description);
       formData.append('price', form.price);
@@ -65,12 +67,16 @@ export default function BrandDashboard() {
       files.forEach(f => formData.append('images', f));
 
       if (editProduct) {
-        await API.put(`/products/${editProduct._id}`, formData);
-        toast.success('Product updated!');
-      } else {
-        await API.post('/products', formData);
-        toast.success('Product created!');
-      }
+  await API.put(`/products/${editProduct._id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  toast.success('Product updated!');
+} else {
+  await API.post('/products', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  toast.success('Product created!');
+}
 
       setShowForm(false);
       fetchData();
