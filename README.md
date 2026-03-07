@@ -8,7 +8,10 @@ A Mini Fashion Marketplace built with the MERN stack where Brands can manage pro
 - **Backend:** https://marketnest-api-4ox8.onrender.com
 - **GitHub:** https://github.com/Pravin-Singh-Charan-gh/MarketNest
 
-
+> ⚠️ **Note:** The backend is hosted on Render's free tier which spins down 
+> after 15 minutes of inactivity. The first request may take 30-60 seconds 
+> to respond while the server wakes up. Please wait and try again if you 
+> get an error on first load.
 
 ---
 
