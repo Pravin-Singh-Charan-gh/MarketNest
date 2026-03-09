@@ -198,4 +198,4 @@ All code was reviewed, understood, and typed/modified manually. The architecture
 ## 👤 Author
 
 **Pravin Singh**  
-[LinkedIn](https://www.linkedin.com/in/your-linkedin-username)  
+[LinkedIn](https://www.linkedin.com/in/pravin07/)  
