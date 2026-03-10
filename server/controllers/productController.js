@@ -108,6 +108,11 @@ exports.getProductById = async (req, res) => {
 // ── UPDATE PRODUCT ─────────────────────────────────────────────
 exports.updateProduct = async (req, res) => {
   try {
+    console.log('Update body:', req.body);
+    console.log('Update files:', req.files);
+    console.log('Product ID:', req.params.id);
+    console.log('User ID:', req.user.id);
+    
     const product = await Product.findById(req.params.id);
 
     if (!product || product.isDeleted) {
