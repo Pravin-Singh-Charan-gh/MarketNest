@@ -110,9 +110,7 @@ exports.updateProduct = async (req, res) => {
   try {
     console.log('Update body:', req.body);
     console.log('Update files:', req.files);
-    console.log('Product ID:', req.params.id);
-    console.log('User ID:', req.user.id);
-    
+
     const product = await Product.findById(req.params.id);
 
     if (!product || product.isDeleted) {
@@ -123,24 +121,34 @@ exports.updateProduct = async (req, res) => {
       return res.status(403).json({ message: 'Forbidden: you do not own this product' });
     }
 
-    const { title, description, price, category, status } = req.body;
+    const { title, description, price, category, status } = req.body || {};
 
-    // Upload new images if any
+    // Handle new image uploads
     const imageFiles = (req.files && req.files['images']) || [];
-    const imageUrls = imageFiles.length > 0
-     ? await Promise.all(imageFiles.map(file => uploadToCloudinary(file.buffer)))
-     : [];
+    const newImageUrls = imageFiles.length > 0
+      ? await Promise.all(imageFiles.map(file => uploadToCloudinary(file.buffer)))
+      : [];
 
-    const images = [...product.images, ...newImageUrls];
+    // Keep existing images + add new ones
+    const existingImages = Array.isArray(product.images) ? product.images : [];
+    const images = [...existingImages, ...newImageUrls];
 
     const updated = await Product.findByIdAndUpdate(
       req.params.id,
-      { title, description, price, category, status, images },
+      { 
+        title: title || product.title,
+        description: description || product.description,
+        price: price || product.price,
+        category: category || product.category,
+        status: status || product.status,
+        images 
+      },
       { new: true, runValidators: true }
     );
 
     res.json({ message: 'Product updated', product: updated });
   } catch (err) {
+    console.log('Update product error FULL:', err);
     res.status(500).json({ message: 'Failed to update product', error: err.message });
   }
 };
